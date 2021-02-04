@@ -14,28 +14,14 @@ from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QGroupBox, QHBoxLayou
 class MplCanvas(Canvas):
     def __init__(self):
         self.fig = Figure()
-        self.ax = self.fig.add_subplot(111)
+        self.ax1 = self.fig.add_subplot(211)
+        self.ax2 = self.fig.add_subplot(212)
 
-        self.lx = self.ax.axhline(color='g')  # the horiz line
-        self.ly = self.ax.axvline(color='g')  # the vert line
-        self.lx2 = self.ax.axhline(color='y')  # the horiz line
-        self.ly2 = self.ax.axvline(color='y')  # the vert line
+        self.lx = self.ax2.axhline(color='g')  # the horiz line
+        self.ly = self.ax2.axvline(color='g')  # the vert line
+        self.lx2 = self.ax2.axhline(color='y')  # the horiz line
+        self.ly2 = self.ax2.axvline(color='y')  # the vert line
 
-
-        """
-        y, sr = librosa.load("resources/bat.wav")
-        S = np.abs(librosa.stft(y))
-        S_left = librosa.stft(y, center=False)
-        D_short = librosa.stft(y, hop_length=64)
-        img = librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max), y_axis='log', x_axis='time', ax=self.ax)
-        self.ax.set_title('Power spectrogram')
-        self.fig.colorbar(img, ax=self.ax, format="%+2.0f dB")
-        """
-
-        """
-        cid = self.fig.canvas.mpl_connect('button_press_event', onclick)
-        self.fig.canvas.mpl_disconnect(cid)
-        """
 
 
         Canvas.__init__(self, self.fig)
@@ -47,6 +33,7 @@ class MplCanvas(Canvas):
 
 # Matplotlib widget
 class MplWidget(QtWidgets.QWidget):
+
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)   # Inherit from QWidget
         self.canvas = MplCanvas()                  # Create canvas object
@@ -54,10 +41,9 @@ class MplWidget(QtWidgets.QWidget):
         self.vbl.addWidget(self.canvas)
         self.setLayout(self.vbl)
 
-
         self.canvas.mpl_connect("button_press_event", self.on_press)
         self.canvas.mpl_connect("button_release_event", self.on_release)
-        #self.canvas.mpl_connect("motion_notify_event", self.on_move)
+        self.canvas.mpl_connect("motion_notify_event", self.on_move)
 
     def on_press(self, event):
         print("press")
@@ -77,9 +63,32 @@ class MplWidget(QtWidgets.QWidget):
         self.canvas.draw()
 
     def on_move(self, event):
-        print("move")
-        #print("event.xdata", event.xdata)
-        #print("event.ydata", event.ydata)
+        if(event.inaxes==self.canvas.ax1):
+            if (isinstance(event.xdata, float) and isinstance(event.ydata, float)):
+                self.parent().parent().label1.setText("Time: " + str(np.round(event.xdata, 2)) + "s")
+                self.parent().parent().label2.setText("Min: " + str(np.round(event.ydata, 2)) )
+                self.parent().parent().label3.setText("Max: "  )
+        if (event.inaxes == self.canvas.ax2):
+            if (isinstance(event.xdata, float) and isinstance(event.ydata, float)):
+                self.parent().parent().label1.setText("Time: " + str(np.round(event.xdata, 2)) + "s")
+                self.parent().parent().label2.setText("Freq: " + str(np.round(event.ydata, 2)) + "Hz")
+
+                #######################################################
+                # stft spectrum data (x, y)
+                # x : input_x * sr * amplitude_x_size / audio_y size
+                # y : input_y * amplitude_y_size * 2 / sr
+                sptx = int(event.xdata * self.audio_sr * np.shape(self.spectrum)[0] / np.size(self.audio_y))
+                spty = int(event.ydata * np.shape(self.spectrum)[1] * 2 / self.audio_sr)
+                self.parent().parent().label3.setText("Power: "+ str(self.spectrum[sptx][spty]) + "dB")
+
+
+
+                #print(int(self.audio_sr / event.xdata))
+                #print(self.audio_y[int(self.audio_sr/event.xdata)])
+                #self.parent().parent().label3.setText("Power: "+ str(event.ydata/self.audio_sr*160 - 80))
+
+
+
 
 
 

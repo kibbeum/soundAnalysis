@@ -15,6 +15,23 @@ import mplwidget
 # Ensure using PyQt5 backend
 matplotlib.use('QT5Agg')
 
+audio_filename = "resources/Myotis ikonnikovi.WAV"
+audio_y, audio_sr = librosa.load(audio_filename, sr=None)
+
+
+
+
+"""
+plt.subplot(211)
+plt.title('Spectrogram')
+librosa.display.specshow(stft_db, x_axis='time', y_axis='log')
+
+plt.subplot(212)
+plt.title('Audioform')
+librosa.display.waveplot(y, sr=sr)
+"""
+
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
@@ -22,34 +39,34 @@ class MainWindow(QtWidgets.QMainWindow):
         #Load the UI Page
         uic.loadUi('C:/projects/SoundAnalysis/ui.ui', self)
 
-
         self.spectrumWidgetPlot(self.spectrumWidget.canvas)
-        self.signalWidgetPlot(self.signalWidget.canvas)
+        #self.signalWidgetPlot(self.signalWidget.canvas)
 
 
     def spectrumWidgetPlot(self, canvas):
-        #y, sr = librosa.load("resources/bat.wav")
-        #y, sr = librosa.load("resources/bat.wav", sr=None)
-        y, sr = librosa.load("resources/Myotis ikonnikovi.WAV", sr=None)
+        self.spectrumWidget.audio_sr = audio_sr
+        self.spectrumWidget.audio_y = audio_y
+
+        #waveform graph
+        librosa.display.waveplot(audio_y, sr=audio_sr, ax=canvas.ax1)
+        #audio_x = np.linspace(0, len(audio_y) / audio_sr, num=len(audio_y))
+        #canvas.ax1.plot(audio_x, audio_y)
 
 
-        S = np.abs(librosa.stft(y))
+        #spectrum graph
+        S = np.abs(librosa.stft(audio_y))
+        self.spectrumWidget.spectrum = amplitude = librosa.amplitude_to_db(S, ref=np.max)
         #img = librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max), y_axis='log', x_axis='time', ax=canvas.ax)
-        img = librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max), y_axis='log', x_axis='s', ax=canvas.ax, sr=sr)
-
-
-        canvas.ax.set_title('Power spectrogram')
-        canvas.fig.colorbar(img, ax=canvas.ax, format="%+2.0f dB")
-        #canvas.ax.set_ylim(9750)
+        librosa.display.specshow(amplitude, y_axis='linear', x_axis='s', ax=canvas.ax2, sr=audio_sr)
+        #canvas.ax2.set_title('Power spectrogram')
+        #canvas.fig.colorbar(img, ax=canvas.ax2, format="%+2.0f dB")
 
 
 
     def signalWidgetPlot(self, canvas):
-        y, sr = librosa.load("resources/bat.wav")
-        S = np.abs(librosa.stft(y))
-        #S_left = librosa.stft(y, center=False)
-        #D_short = librosa.stft(y, hop_length=64)
-        canvas.ax.plot(y)
+        librosa.display.waveplot(audio_y, sr=audio_sr)
+        audio_x = np.linspace(0, len(audio_y) / audio_sr, num=len(audio_y))
+        canvas.ax.plot(audio_x, audio_y)
         #img = librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max), y_axis='log', x_axis='time', ax=canvas.ax)
         #canvas.ax.set_title('Power spectrogram')
         #canvas.fig.colorbar(img, ax=canvas.ax, format="%+2.0f dB")
