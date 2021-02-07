@@ -10,12 +10,23 @@ import librosa
 import librosa.display
 import numpy as np
 
+from pydub import AudioSegment, playback
+import audioplayer
+import pygame
+
+import matplotlib.animation as animation
+
+
+
+
 import mplwidget
 
 # Ensure using PyQt5 backend
 matplotlib.use('QT5Agg')
 
-audio_filename = "resources/Myotis ikonnikovi.WAV"
+#audio_filename = "resources/Myotis ikonnikovi.WAV"
+audio_filename = "resources/죽전동 맹꽁이 한마리 2020_07_22_16_16_31.mp3"
+ui = "resources/main.ui"
 audio_y, audio_sr = librosa.load(audio_filename, sr=None)
 
 
@@ -37,10 +48,53 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         #Load the UI Page
-        uic.loadUi('C:/projects/SoundAnalysis/ui.ui', self)
+        uic.loadUi(ui, self)
 
         self.spectrumWidgetPlot(self.spectrumWidget.canvas)
         #self.signalWidgetPlot(self.signalWidget.canvas)
+
+        audio = AudioSegment.from_file(audio_filename, os.path.splitext(audio_filename)[1][1:])
+        #audio.export("mashup.mp3", format="mp3")
+
+        self.player = audioplayer.AudioPlayer(audio_filename)
+        self.actionPlay.triggered.connect(self.btn_clicked_actionPlay)
+        self.actionStop.triggered.connect(self.btn_clicked_actionStop)
+        self.actionPos.triggered.connect(self.btn_clicked_actionPos)
+
+        pygame.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load(audio_filename)
+
+
+    # Sound sources: Jon Fincher
+    #move_up_sound = pygame.mixer.Sound("Rising_putter.ogg")
+    #move_down_sound = pygame.mixer.Sound("Falling_putter.ogg")
+    #collision_sound = pygame.mixer.Sound("Collision.ogg")
+    #move_up_sound.play()
+
+    def btn_clicked_actionPlay(self):
+        if(self.actionPlay.text()=="Play"):
+            self.actionPlay.setText("Pause")
+            if(pygame.mixer.music.get_pos()==-1):
+                print("play")
+                pygame.mixer.music.play()
+            else:
+                print("play")
+                pygame.mixer.music.unpause()
+        else:
+            print("pause")
+            pygame.mixer.music.pause()
+            self.actionPlay.setText("Play")
+
+
+    def btn_clicked_actionStop(self):
+        print("stop")
+        pygame.mixer.music.stop()
+        self.actionPlay.setText("Play")
+
+    def btn_clicked_actionPos(self):
+        print("pos")
+        print(pygame.mixer.music.get_pos())
 
 
     def spectrumWidgetPlot(self, canvas):

@@ -133,8 +133,17 @@
     <addaction name="actionConcat_files"/>
     <addaction name="actionSplit_files"/>
    </widget>
+   <widget class="QMenu" name="menuPlay">
+    <property name="title">
+     <string>Play</string>
+    </property>
+    <addaction name="actionPlay"/>
+    <addaction name="actionStop"/>
+    <addaction name="actionPos"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menuedit"/>
+   <addaction name="menuPlay"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action">
@@ -155,6 +164,26 @@
   <action name="actionSplit_files">
    <property name="text">
     <string>Split File</string>
+   </property>
+  </action>
+  <action name="actionPlay">
+   <property name="text">
+    <string>Play</string>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="text">
+    <string>Pause</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="text">
+    <string>Stop</string>
+   </property>
+  </action>
+  <action name="actionPos">
+   <property name="text">
+    <string>Pos</string>
    </property>
   </action>
  </widget>

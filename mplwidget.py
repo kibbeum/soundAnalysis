@@ -5,6 +5,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as Canvas
 import numpy as np
 from matplotlib.patches import Rectangle
 import matplotlib
+from BoundrySelector import  BoundrySelector
 
 
 from matplotlib.widgets import RectangleSelector
@@ -56,30 +57,23 @@ class MplWidget(QtWidgets.QWidget):
         self.rectEndX=0
         self.rectEndY=0
 
+
         self.RS = RectangleSelector(self.canvas.ax2, self.line_select_callback,
                                        drawtype='box', useblit=True,
-                                       button=[1, 3],  # don't use middle button
+                                       button=[1],  # don't use middle button
                                        minspanx=5, minspany=5,
                                        spancoords='pixels',
                                        interactive=True)
 
-        """
-        self.span = SpanSelector(self.canvas.ax1, self.onselect,
-                                 'horizontal', useblit=True,
-                                 button=[1],  # don't use middle button
-                                rectprops=dict(alpha=0.5, facecolor='red'), span_stays=True)
-        
-    def onselect(self, xmin, xmax):
-        xmin
-        #indmin, indmax = np.searchsorted(x, (xmin, xmax))
-        #indmax = min(len(x) - 1, indmax)
-        #thisx = x[indmin:indmax]
-        #thisy = y[indmin:indmax]
-        #line2.set_data(thisx, thisy)
-        #ax2.set_xlim(thisx[0], thisx[-1])
-        #ax2.set_ylim(thisy.min(), thisy.max())
-        #fig.canvas.draw()
-    """
+
+        self.RS2 = BoundrySelector(self.canvas.ax1, self.line_select_callback,
+                                       drawtype='box', useblit=True,
+                                       button=[1],  # don't use middle button
+                                       minspanx=5, minspany=5,
+                                       spancoords='pixels',
+                                       interactive=True)
+
+
 
     def line_select_callback(self, eclick, erelease):
         self.rectStartX = 0
