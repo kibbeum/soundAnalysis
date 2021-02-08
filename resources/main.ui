@@ -15,13 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="0">
-     <widget class="MplWidget" name="spectrumWidget" native="true">
-      <property name="cursor">
-       <cursorShape>CrossCursor</cursorShape>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0">
      <widget class="QFrame" name="frame">
       <property name="maximumSize">
@@ -108,6 +101,13 @@
       </layout>
      </widget>
     </item>
+    <item row="0" column="0">
+     <widget class="MplWidget" name="spectrumWidget" native="true">
+      <property name="cursor">
+       <cursorShape>CrossCursor</cursorShape>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -124,7 +124,6 @@
      <string>File</string>
     </property>
     <addaction name="action"/>
-    <addaction name="action_2"/>
    </widget>
    <widget class="QMenu" name="menuedit">
     <property name="title">

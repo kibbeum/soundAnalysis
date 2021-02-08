@@ -10,6 +10,7 @@ X_VALS = range(X_MIN, X_MAX+1) # possible x values for the line
 
 
 def update_line(num, line):
+    print("yes")
     i = X_VALS[num]
     line.set_data( [i, i], [Y_MIN, Y_MAX])
     return line,
@@ -30,6 +31,7 @@ plt.ylabel('y = sin(x)')
 plt.title('Line animation')
 
 line_anim = animation.FuncAnimation(fig, update_line, len(X_VALS), fargs=(l, ))
+
 
 #line_anim.save('line_animation.gif', writer='imagemagick', fps=4);
 

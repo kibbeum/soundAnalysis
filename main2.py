@@ -16,7 +16,9 @@ import pygame
 
 import matplotlib.animation as animation
 
+import concatWindow as cw
 
+from scipy.io import wavfile
 
 
 import mplwidget
@@ -28,8 +30,7 @@ matplotlib.use('QT5Agg')
 audio_filename = "resources/죽전동 맹꽁이 한마리 2020_07_22_16_16_31.mp3"
 ui = "resources/main.ui"
 audio_y, audio_sr = librosa.load(audio_filename, sr=None)
-
-
+#sw_sr, sw_y = wavfile.read(audio_filename)
 
 
 """
@@ -61,9 +62,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionStop.triggered.connect(self.btn_clicked_actionStop)
         self.actionPos.triggered.connect(self.btn_clicked_actionPos)
 
+        self.actionConcat_files.triggered.connect(self.btn_clicked_actionConcat_files)
+
         pygame.init()
         pygame.mixer.init()
         pygame.mixer.music.load(audio_filename)
+
+        #self.aniTest()
+
+
 
 
     # Sound sources: Jon Fincher
@@ -71,6 +78,33 @@ class MainWindow(QtWidgets.QMainWindow):
     #move_down_sound = pygame.mixer.Sound("Falling_putter.ogg")
     #collision_sound = pygame.mixer.Sound("Collision.ogg")
     #move_up_sound.play()
+
+
+
+
+    def update_line(self, num, line):
+        i = self.X_VALS[num]
+        line.set_data([i, i], [self.Y_MIN, self.Y_MAX])
+        return line,
+
+    def aniTest(self):
+        self.X_MIN = 0
+        #self.X_MAX = np.shape(self.audio_y)[0]/self.audio_sr*1000
+        self.X_MAX = 500
+        self.Y_MIN = -0.5
+        #self.Y_MAX = np.max()
+        self.Y_MAX = 0.5
+        self.X_VALS = range(self.X_MIN, self.X_MAX + 1)  # possible x values for the line
+        self.l,  = self.spectrumWidget.canvas.ax1.plot(0, 0,  linewidth=2, color='red')
+        self.line_anim = animation.FuncAnimation(self.spectrumWidget.canvas.fig, self.update_line, len(self.X_VALS), fargs=(self.l,))
+        #anim = animation.FuncAnimation(fig, animate, init_func=init, frames=100, interval=20, blit=True)
+
+
+    def btn_clicked_actionConcat_files(self):
+        print("click")
+        concatWin = cw.concatWindow()
+        concatWin.exec_()
+
 
     def btn_clicked_actionPlay(self):
         if(self.actionPlay.text()=="Play"):
@@ -101,8 +135,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.spectrumWidget.audio_sr = audio_sr
         self.spectrumWidget.audio_y = audio_y
 
+        #print(np.max(audio_y))
+        #print(np.min(audio_y))
         #waveform graph
         librosa.display.waveplot(audio_y, sr=audio_sr, ax=canvas.ax1)
+        #canvas.ax1.plot(sw_y)
         #audio_x = np.linspace(0, len(audio_y) / audio_sr, num=len(audio_y))
         #canvas.ax1.plot(audio_x, audio_y)
 

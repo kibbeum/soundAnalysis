@@ -9,7 +9,7 @@ from BoundrySelector import  BoundrySelector
 
 
 from matplotlib.widgets import RectangleSelector
-from matplotlib.widgets import SpanSelector
+
 
 """
 import sys
@@ -58,6 +58,8 @@ class MplWidget(QtWidgets.QWidget):
         self.rectEndY=0
 
 
+
+
         self.RS = RectangleSelector(self.canvas.ax2, self.line_select_callback,
                                        drawtype='box', useblit=True,
                                        button=[1],  # don't use middle button
@@ -72,6 +74,9 @@ class MplWidget(QtWidgets.QWidget):
                                        minspanx=5, minspany=5,
                                        spancoords='pixels',
                                        interactive=True)
+
+
+
 
 
 
@@ -114,11 +119,19 @@ class MplWidget(QtWidgets.QWidget):
 
         if(event.inaxes==self.canvas.ax1):
             if (isinstance(event.xdata, float) and isinstance(event.ydata, float)):
-                self.parent().parent().label1.setText("Time: " + str(np.round(event.xdata, 2)) + "s   " +
-                                                      "Min: " + str(np.round(event.ydata, 2)) + "   " +
-                                                      "Max: ")
+                self.parent().parent().label1.setText("Time: " + str(np.round(event.xdata, 2)) + "s")
+                #                                      "Min: " + str(np.round(event.ydata, 2)) + "   " +
+                #                                      "index: " + str(int(event.xdata*self.audio_sr)) + "   " +
+                #                                      "value: " + str(self.audio_y[int(event.xdata * self.audio_sr)]))
+
+                #"Max: " + str(self.audio_y[event.xdata * self.audio_sr]))
                 #self.parent().parent().label2.setText("Min: " + str(np.round(event.ydata, 2)) )
                 #self.parent().parent().label3.setText("Max: "  )
+
+                #print("sr " + str(audio_sr))
+                #print("y " + str(audio_y))
+                #print("shape " + str(np.shape(audio_y)))
+                #print("time " + str(np.shape(audio_y)[0] / audio_sr)) # time
 
 
         if (event.inaxes == self.canvas.ax2):
