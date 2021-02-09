@@ -17,6 +17,7 @@ import pygame
 import matplotlib.animation as animation
 
 import concatWindow as cw
+import splitWindow as sw
 
 from scipy.io import wavfile
 
@@ -63,6 +64,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionPos.triggered.connect(self.btn_clicked_actionPos)
 
         self.actionConcat_files.triggered.connect(self.btn_clicked_actionConcat_files)
+        self.actionSplit_files.triggered.connect(self.btn_clicked_actionSplit_files)
 
         pygame.init()
         pygame.mixer.init()
@@ -101,9 +103,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def btn_clicked_actionConcat_files(self):
-        print("click")
         concatWin = cw.concatWindow()
         concatWin.exec_()
+
+    def btn_clicked_actionSplit_files(self):
+        splitWin = sw.splitWindow(self.spectrumWidget.whichEventAx, self.spectrumWidget.rectStartX, self.spectrumWidget.rectEndX, self.spectrumWidget.rectStartY, self.spectrumWidget.rectEndY)
+        splitWin.exec_()
+
+        """
+        self.rectStartX=0
+        self.rectStartY=0
+        self.rectEndX=0
+        self.rectEndY=0
+        """
 
 
     def btn_clicked_actionPlay(self):

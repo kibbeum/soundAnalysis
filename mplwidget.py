@@ -56,11 +56,12 @@ class MplWidget(QtWidgets.QWidget):
         self.rectStartY=0
         self.rectEndX=0
         self.rectEndY=0
+        self.whichEventAx = ""
 
 
 
 
-        self.RS = RectangleSelector(self.canvas.ax2, self.line_select_callback,
+        self.RS = RectangleSelector(self.canvas.ax2, self.rs_ax2_callback,
                                        drawtype='box', useblit=True,
                                        button=[1],  # don't use middle button
                                        minspanx=5, minspany=5,
@@ -68,7 +69,7 @@ class MplWidget(QtWidgets.QWidget):
                                        interactive=True)
 
 
-        self.RS2 = BoundrySelector(self.canvas.ax1, self.line_select_callback,
+        self.RS2 = BoundrySelector(self.canvas.ax1, self.rs_ax1_callback,
                                        drawtype='box', useblit=True,
                                        button=[1],  # don't use middle button
                                        minspanx=5, minspany=5,
@@ -80,11 +81,19 @@ class MplWidget(QtWidgets.QWidget):
 
 
 
-    def line_select_callback(self, eclick, erelease):
-        self.rectStartX = 0
-        self.rectStartY = 0
-        self.rectEndX = 0
-        self.rectEndY = 0
+    def rs_ax2_callback(self, eclick, erelease):
+        self.whichEventAx="ax2"
+        #self.rectStartX = 0
+        #self.rectStartY = 0
+        #self.rectEndX = 0
+        #self.rectEndY = 0
+
+    def rs_ax1_callback(self, eclick, erelease):
+        self.whichEventAx="ax1"
+        #self.rectStartX = 0
+        #self.rectStartY = 0
+        #self.rectEndX = 0
+        #self.rectEndY = 0
 
 
     def on_press(self, event):
@@ -99,10 +108,10 @@ class MplWidget(QtWidgets.QWidget):
 
     def on_release(self, event):
         self.isPressd = False
-        self.rectStartX = 0
-        self.rectStartY = 0
-        self.rectEndX = 0
-        self.rectEndY = 0
+        #self.rectStartX = 0
+        #self.rectStartY = 0
+        self.rectEndX = event.xdata
+        self.rectEndY = event.ydata
         print("release:")
         print("event.xdata", event.xdata)
         print("event.ydata", event.ydata)
