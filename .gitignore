@@ -1,4 +1,4 @@
-resources/*.wav
-resources/*.mp3
 venv
 *.exe
+*.wav
+*.mp3
