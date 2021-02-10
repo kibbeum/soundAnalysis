@@ -18,6 +18,7 @@ import matplotlib.animation as animation
 
 import concatWindow as cw
 import splitWindow as sw
+import openWindow as ow
 
 from scipy.io import wavfile
 
@@ -27,11 +28,14 @@ import mplwidget
 # Ensure using PyQt5 backend
 matplotlib.use('QT5Agg')
 
+"""
+#audio_filename = "C:/test2/split2.mp3"
+#audio_filename = "C:/test2/splitWithFilter.wav"
 #audio_filename = "resources/Myotis ikonnikovi.WAV"
 audio_filename = "resources/죽전동 맹꽁이 한마리 2020_07_22_16_16_31.mp3"
-ui = "resources/main.ui"
 audio_y, audio_sr = librosa.load(audio_filename, sr=None)
 #sw_sr, sw_y = wavfile.read(audio_filename)
+"""
 
 
 """
@@ -48,17 +52,19 @@ librosa.display.waveplot(y, sr=sr)
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-
         #Load the UI Page
+        ui = "resources/main.ui"
         uic.loadUi(ui, self)
 
+        """
         self.spectrumWidgetPlot(self.spectrumWidget.canvas)
         #self.signalWidgetPlot(self.signalWidget.canvas)
-
         audio = AudioSegment.from_file(audio_filename, os.path.splitext(audio_filename)[1][1:])
         #audio.export("mashup.mp3", format="mp3")
-
         self.player = audioplayer.AudioPlayer(audio_filename)
+        """
+
+
         self.actionPlay.triggered.connect(self.btn_clicked_actionPlay)
         self.actionStop.triggered.connect(self.btn_clicked_actionStop)
         self.actionPos.triggered.connect(self.btn_clicked_actionPos)
@@ -66,9 +72,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionConcat_files.triggered.connect(self.btn_clicked_actionConcat_files)
         self.actionSplit_files.triggered.connect(self.btn_clicked_actionSplit_files)
 
+        self.actionOpen.triggered.connect(self.btn_clicked_actionOpen)
+
+        """
         pygame.init()
         pygame.mixer.init()
         pygame.mixer.music.load(audio_filename)
+        """
 
         #self.aniTest()
 
@@ -80,6 +90,28 @@ class MainWindow(QtWidgets.QMainWindow):
     #move_down_sound = pygame.mixer.Sound("Falling_putter.ogg")
     #collision_sound = pygame.mixer.Sound("Collision.ogg")
     #move_up_sound.play()
+
+    def loadInit(self, filename):
+        ## from the top
+        # audio_filename = "C:/test2/split2.mp3"
+        # audio_filename = "C:/test2/splitWithFilter.wav"
+        # audio_filename = "resources/Myotis ikonnikovi.WAV"
+        #self.audio_filename = "resources/죽전동 맹꽁이 한마리 2020_07_22_16_16_31.mp3"
+        #audio_y, audio_sr = librosa.load(audio_filename, sr=None)
+        # sw_sr, sw_y = wavfile.read(audio_filename)
+
+        self.audio_filename = filename
+        self.audio_y, self.audio_sr = librosa.load(filename, sr=None)
+
+        ## from the init
+        self.spectrumWidgetPlot(self.spectrumWidget.canvas, self.audio_y, self.audio_sr)
+        # self.signalWidgetPlot(self.signalWidget.canvas, self.audio_y, self.audio_sr)
+        audio = AudioSegment.from_file(filename, os.path.splitext(filename)[1][1:])
+
+        pygame.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load(filename)
+
 
 
 
@@ -102,20 +134,17 @@ class MainWindow(QtWidgets.QMainWindow):
         #anim = animation.FuncAnimation(fig, animate, init_func=init, frames=100, interval=20, blit=True)
 
 
+    def btn_clicked_actionOpen(self):
+        openWin = ow.openWindow(self)
+        openWin.exec_()
+
     def btn_clicked_actionConcat_files(self):
         concatWin = cw.concatWindow()
         concatWin.exec_()
 
     def btn_clicked_actionSplit_files(self):
-        splitWin = sw.splitWindow(self.spectrumWidget.whichEventAx, self.spectrumWidget.rectStartX, self.spectrumWidget.rectEndX, self.spectrumWidget.rectStartY, self.spectrumWidget.rectEndY)
+        splitWin = sw.splitWindow(self.audio_filename, self.spectrumWidget.whichEventAx, self.spectrumWidget.rectStartX, self.spectrumWidget.rectEndX, self.spectrumWidget.rectStartY, self.spectrumWidget.rectEndY)
         splitWin.exec_()
-
-        """
-        self.rectStartX=0
-        self.rectStartY=0
-        self.rectEndX=0
-        self.rectEndY=0
-        """
 
 
     def btn_clicked_actionPlay(self):
@@ -143,7 +172,9 @@ class MainWindow(QtWidgets.QMainWindow):
         print(pygame.mixer.music.get_pos())
 
 
-    def spectrumWidgetPlot(self, canvas):
+    def spectrumWidgetPlot(self, canvas, audio_y, audio_sr):
+        canvas.ax1.cla()
+        canvas.ax2.cla()
         self.spectrumWidget.audio_sr = audio_sr
         self.spectrumWidget.audio_y = audio_y
 
@@ -164,9 +195,11 @@ class MainWindow(QtWidgets.QMainWindow):
         #canvas.ax2.set_title('Power spectrogram')
         #canvas.fig.colorbar(img, ax=canvas.ax2, format="%+2.0f dB")
 
+        canvas.fig.canvas.draw()
 
 
-    def signalWidgetPlot(self, canvas):
+
+    def signalWidgetPlot(self, canvas, audio_y, audio_sr):
         librosa.display.waveplot(audio_y, sr=audio_sr)
         audio_x = np.linspace(0, len(audio_y) / audio_sr, num=len(audio_y))
         canvas.ax.plot(audio_x, audio_y)

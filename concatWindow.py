@@ -47,6 +47,8 @@ class concatWindow(QtWidgets.QDialog):
         else:
             print("error")
 
+        self.close()
+
     def btn_closeButton(self):
         self.close()
 
