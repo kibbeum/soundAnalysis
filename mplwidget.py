@@ -1,5 +1,6 @@
 
 from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtCore import Qt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as Canvas
 import numpy as np
@@ -27,9 +28,10 @@ class MplCanvas(Canvas):
         self.ax1 = self.fig.add_subplot(211)
         self.ax2 = self.fig.add_subplot(212)
 
-
         Canvas.__init__(self, self.fig)
-        Canvas.setSizePolicy(self, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        #Canvas.setSizePolicy(self, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        Canvas.setSizePolicy(self, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+
         Canvas.updateGeometry(self)
 
 
@@ -42,8 +44,17 @@ class MplWidget(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self, parent)   # Inherit from QWidget
         self.canvas = MplCanvas()                  # Create canvas object
         self.vbl = QtWidgets.QVBoxLayout()         # Set box for plotting
-        self.vbl.addWidget(self.canvas)
+
+        self.scroll = QtWidgets.QScrollArea()
+        self.scroll.setWidget(self.canvas)
+        self.vbl.addWidget(self.scroll)
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setWidgetResizable(True)
+
+        #self.vbl.addWidget(self.canvas)
         self.setLayout(self.vbl)
+
 
 
 
@@ -79,7 +90,10 @@ class MplWidget(QtWidgets.QWidget):
 
 
 
-
+    def myInit(self, mw):
+        self.mw = mw
+        #w, h = self.canvas.fig.get_size_inches()
+        #self.canvas.fig.set_size_inches(w,h)
 
     def rs_ax2_callback(self, eclick, erelease):
         self.whichEventAx="ax2"
@@ -128,7 +142,7 @@ class MplWidget(QtWidgets.QWidget):
 
         if(event.inaxes==self.canvas.ax1):
             if (isinstance(event.xdata, float) and isinstance(event.ydata, float)):
-                self.parent().parent().label1.setText("Time: " + str(np.round(event.xdata, 2)) + "s")
+                self.mw.label1.setText("Time: " + str(np.round(event.xdata, 2)) + "s")
                 #                                      "Min: " + str(np.round(event.ydata, 2)) + "   " +
                 #                                      "index: " + str(int(event.xdata*self.audio_sr)) + "   " +
                 #                                      "value: " + str(self.audio_y[int(event.xdata * self.audio_sr)]))
@@ -151,7 +165,7 @@ class MplWidget(QtWidgets.QWidget):
                 # y : input_y * amplitude_y_size * 2 / sr
                 sptx = int(event.xdata * self.audio_sr * np.shape(self.spectrum)[0] / np.size(self.audio_y))
                 spty = int(event.ydata * np.shape(self.spectrum)[1] * 2 / self.audio_sr)
-                self.parent().parent().label1.setText("Time: " + str(np.round(event.xdata, 3)) + "s   " +
+                self.mw.label1.setText("Time: " + str(np.round(event.xdata, 3)) + "s   " +
                                                       "Freq: " + str("{:,}".format(int(event.ydata))) + "Hz   " +
                                                       "Power: " + str(np.round(self.spectrum[sptx][spty], 1)) + "dB")
                 #self.parent().parent().label2.setText("Freq: " + str(np.round(event.ydata, 2)) + "Hz")

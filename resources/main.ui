@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1069</width>
-    <height>735</height>
+    <width>872</width>
+    <height>677</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
-    <item row="1" column="0">
+    <item row="2" column="0">
      <widget class="QFrame" name="frame">
       <property name="maximumSize">
        <size>
@@ -101,11 +101,90 @@
       </layout>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="MplWidget" name="spectrumWidget" native="true">
-      <property name="cursor">
-       <cursorShape>CrossCursor</cursorShape>
+    <item row="1" column="0">
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
       </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>850</width>
+         <height>523</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="MplWidget" name="spectrumWidget" native="true">
+          <property name="cursor">
+           <cursorShape>CrossCursor</cursorShape>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QWidget" name="widget" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>40</height>
+       </size>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="zoomInYButton">
+         <property name="text">
+          <string>Zoom In Y</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="zoomOutXButton">
+         <property name="text">
+          <string>Zoom Out X</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QPushButton" name="pushButton_4">
+         <property name="text">
+          <string>&lt;&lt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="text">
+          <string>&gt;&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="zoomInXButton">
+         <property name="text">
+          <string>Zoom In X</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QPushButton" name="zoomOutYButton">
+         <property name="text">
+          <string>Zoom Out Y</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
@@ -115,7 +194,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1069</width>
+     <width>872</width>
      <height>26</height>
     </rect>
    </property>

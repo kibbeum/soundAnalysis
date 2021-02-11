@@ -56,6 +56,9 @@ class MainWindow(QtWidgets.QMainWindow):
         ui = "resources/main.ui"
         uic.loadUi(ui, self)
 
+        self.spectrumWidget.myInit(self)
+
+
         """
         self.spectrumWidgetPlot(self.spectrumWidget.canvas)
         #self.signalWidgetPlot(self.signalWidget.canvas)
@@ -73,6 +76,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actionSplit_files.triggered.connect(self.btn_clicked_actionSplit_files)
 
         self.actionOpen.triggered.connect(self.btn_clicked_actionOpen)
+
+        self.zoomInXButton.clicked.connect(self.btn_clicked_zoomInXButton)
+        self.zoomOutXButton.clicked.connect(self.btn_clicked_zoomOutXButton)
+        self.zoomInYButton.clicked.connect(self.btn_clicked_zoomInYButton)
+        self.zoomOutYButton.clicked.connect(self.btn_clicked_zoomOutYButton)
+
 
         """
         pygame.init()
@@ -133,6 +142,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self.line_anim = animation.FuncAnimation(self.spectrumWidget.canvas.fig, self.update_line, len(self.X_VALS), fargs=(self.l,))
         #anim = animation.FuncAnimation(fig, animate, init_func=init, frames=100, interval=20, blit=True)
 
+
+    def btn_clicked_zoomInXButton(self):
+        w, h = self.spectrumWidget.canvas.fig.get_size_inches()
+        self.spectrumWidget.canvas.fig.set_size_inches(w+3, h)
+        self.spectrumWidgetPlot(self.spectrumWidget.canvas, self.audio_y, self.audio_sr)
+
+    def btn_clicked_zoomOutXButton(self):
+        w, h = self.spectrumWidget.canvas.fig.get_size_inches()
+        self.spectrumWidget.canvas.fig.set_size_inches(w-3, h)
+        self.spectrumWidgetPlot(self.spectrumWidget.canvas, self.audio_y, self.audio_sr)
+
+    def btn_clicked_zoomInYButton(self):
+        w, h = self.spectrumWidget.canvas.fig.get_size_inches()
+        self.spectrumWidget.canvas.fig.set_size_inches(w, h+3)
+        self.spectrumWidgetPlot(self.spectrumWidget.canvas, self.audio_y, self.audio_sr)
+
+    def btn_clicked_zoomOutYButton(self):
+        w, h = self.spectrumWidget.canvas.fig.get_size_inches()
+        self.spectrumWidget.canvas.fig.set_size_inches(w, h-3)
+        self.spectrumWidgetPlot(self.spectrumWidget.canvas, self.audio_y, self.audio_sr)
 
     def btn_clicked_actionOpen(self):
         openWin = ow.openWindow(self)
