@@ -221,6 +221,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.spectrumWidget.spectrum = amplitude = librosa.amplitude_to_db(S, ref=np.max)
         #img = librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max), y_axis='log', x_axis='time', ax=canvas.ax)
         librosa.display.specshow(amplitude, y_axis='linear', x_axis='s', ax=canvas.ax2, sr=audio_sr)
+        #librosa.display.specshow(amplitude, y_axis='linear', x_axis='s', ax=canvas.ax2, sr=audio_sr, cmap='Greys')
         #canvas.ax2.set_title('Power spectrogram')
         #canvas.fig.colorbar(img, ax=canvas.ax2, format="%+2.0f dB")
 
