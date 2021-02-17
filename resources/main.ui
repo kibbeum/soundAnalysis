@@ -125,41 +125,18 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>724</width>
-         <height>399</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="MplWidget" name="spectrumWidget" native="true">
-          <property name="cursor">
-           <cursorShape>CrossCursor</cursorShape>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
     <item row="0" column="0">
      <widget class="QWidget" name="widget" native="true">
       <property name="minimumSize">
        <size>
         <width>0</width>
         <height>40</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>70</height>
        </size>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
@@ -531,14 +508,14 @@
                 <item>
                  <widget class="QPushButton" name="pushButton_3">
                   <property name="text">
-                   <string>&gt;&gt;</string>
+                   <string>Play</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButton_4">
                   <property name="text">
-                   <string>&lt;&lt;</string>
+                   <string>Stop</string>
                   </property>
                  </widget>
                 </item>
@@ -552,6 +529,13 @@
         </widget>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="MplWidget" name="spectrumWidget" native="true">
+      <property name="cursor">
+       <cursorShape>CrossCursor</cursorShape>
+      </property>
      </widget>
     </item>
    </layout>
@@ -579,8 +563,6 @@
      <property name="title">
       <string>spectrogram color</string>
      </property>
-     <addaction name="actionmagma"/>
-     <addaction name="actionGreys"/>
     </widget>
     <addaction name="actionConcat_files"/>
     <addaction name="actionSplit_files"/>
@@ -641,11 +623,20 @@
    </property>
   </action>
   <action name="actionmagma">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>magma</string>
    </property>
   </action>
   <action name="actionGreys">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Greys</string>
    </property>

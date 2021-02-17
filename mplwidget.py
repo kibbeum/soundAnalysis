@@ -68,6 +68,7 @@ class MplWidget(QtWidgets.QWidget):
         self.rectEndX=0
         self.rectEndY=0
         self.whichEventAx = ""
+        self.rectFlag = False
 
 
 
@@ -130,6 +131,7 @@ class MplWidget(QtWidgets.QWidget):
         print("event.xdata", event.xdata)
         print("event.ydata", event.ydata)
         #self.canvas.draw()
+        self.rectFlag = True
 
 
 

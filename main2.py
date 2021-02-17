@@ -20,19 +20,23 @@ import concatWindow as cw
 import splitWindow as sw
 import openWindow as ow
 
+import threading
+
 from scipy.io import wavfile
+
 
 
 import mplwidget
 
 # Ensure using PyQt5 backend
-matplotlib.use('QT5Agg')
+#matplotlib.use('QT5Agg')
+matplotlib.style.use('fast')
 
 """
 #audio_filename = "C:/test2/split2.mp3"
 #audio_filename = "C:/test2/splitWithFilter.wav"
 #audio_filename = "resources/Myotis ikonnikovi.WAV"
-audio_filename = "resources/죽전동 맹꽁이 한마리 2020_07_22_16_16_31.mp3"
+audio_filename = "resources/죽전동 맹꽁이 한마리 2020_animation07_22_16_16_31.mp3"
 audio_y, audio_sr = librosa.load(audio_filename, sr=None)
 #sw_sr, sw_y = wavfile.read(audio_filename)
 """
@@ -56,7 +60,13 @@ class MainWindow(QtWidgets.QMainWindow):
         ui = "resources/main.ui"
         uic.loadUi(ui, self)
 
+        matplotlib.rcParams['path.simplify'] = True
+        matplotlib.rcParams['path.simplify_threshold'] = 1.0
+        matplotlib.rcParams['agg.path.chunksize'] = 10000
+
+        self.menuspectrogram_color_init()
         self.spectrumWidget.myInit(self)
+
 
 
         """
@@ -81,6 +91,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoomOutXButton.clicked.connect(self.btn_clicked_zoomOutXButton)
         self.zoomInYButton.clicked.connect(self.btn_clicked_zoomInYButton)
         self.zoomOutYButton.clicked.connect(self.btn_clicked_zoomOutYButton)
+
 
 
         """
@@ -112,6 +123,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.audio_filename = filename
         self.audio_y, self.audio_sr = librosa.load(filename, sr=None)
 
+        if hasattr(self, 'line_anim'):
+            self.line_anim=None
+
+
+        self.aniTest(self.audio_sr, self.audio_y )
+        self.line_anim.event_source.stop()
+
         ## from the init
         self.spectrumWidgetPlot(self.spectrumWidget.canvas, self.audio_y, self.audio_sr)
         # self.signalWidgetPlot(self.signalWidget.canvas, self.audio_y, self.audio_sr)
@@ -120,27 +138,81 @@ class MainWindow(QtWidgets.QMainWindow):
         pygame.init()
         pygame.mixer.init()
         pygame.mixer.music.load(filename)
+        self.pos_init()
 
 
+    def menuspectrogram_color_init(self):
+        self.spectrum_color_group = QtWidgets.QActionGroup(self.menuspectrogram_color)
+        texts = ["magma", "Greys"]
+        for text in texts:
+            action = QtWidgets.QAction(text, self.menuspectrogram_color, checkable=True, checked=text == texts[0])
+            self.menuspectrogram_color.addAction(action)
+            self.spectrum_color_group.addAction(action)
+        self.spectrum_color_group.setExclusive(True)
+        self.spectrum_color_group.triggered.connect(self.btn_clicked_menuspectrogram_color)
+        self.spectrum_color = texts[0]
 
+    def pos_init(self):
+        self.pos_start = 0
+        self.pos_end = np.shape(self.audio_y)[0]/self.audio_sr
+        print(self.pos_start, self.pos_end)
 
 
     def update_line(self, num, line):
+        #print(num)
         i = self.X_VALS[num]
         line.set_data([i, i], [self.Y_MIN, self.Y_MAX])
         return line,
 
-    def aniTest(self):
+    def update_line2(self, num, vl, vl2, period):
+        #t = num * period / 1000
+        #vl.set_xdata([t, t])
+        #pygame.mixer.music.get_pos()
+        #print(pygame.mixer.get_init())
+
+        if pygame.mixer.get_init() and pygame.mixer.music.get_pos()!=-1:
+            #vl.set_xdata([pygame.mixer.music.get_pos(), pygame.mixer.music.get_pos()])
+            index = pygame.mixer.music.get_pos() / 1000.0 +self.pos_start
+            vl.set_xdata([index, index])
+            vl2.set_xdata([index, index])
+
+            if self.pos_end < index:
+                print("here")
+                self.btn_clicked_actionStop()
+        else:
+            self.line_anim.event_source.stop()
+
+
+
+
+        return vl, vl2
+
+    def aniTest(self, audio_sr, audio_y):
+        refreshPeriod = 100  # in ms
         self.X_MIN = 0
+        self.X_MAX = int(np.shape(self.audio_y)[0]/self.audio_sr)
         #self.X_MAX = np.shape(self.audio_y)[0]/self.audio_sr*1000
-        self.X_MAX = 500
-        self.Y_MIN = -0.5
-        #self.Y_MAX = np.max()
-        self.Y_MAX = 0.5
+        #self.X_MAX = 500
+        #self.Y_MIN = -0.5
+        #self.Y_MAX = 0.5
+        self.Y_MIN = -1.0
+        self.Y_MAX = 1.0
         self.X_VALS = range(self.X_MIN, self.X_MAX + 1)  # possible x values for the line
-        self.l,  = self.spectrumWidget.canvas.ax1.plot(0, 0,  linewidth=2, color='red')
-        self.line_anim = animation.FuncAnimation(self.spectrumWidget.canvas.fig, self.update_line, len(self.X_VALS), fargs=(self.l,))
-        #anim = animation.FuncAnimation(fig, animate, init_func=init, frames=100, interval=20, blit=True)
+        #self.l, v  = self.spectrumWidget.canvas.ax1.plot(0, 0, 0, 0,  linewidth=2, color='red')
+        vl = self.spectrumWidget.canvas.ax1.axvline(0, ls='-', color='r', lw=1, zorder=10)
+        vl2 = self.spectrumWidget.canvas.ax2.axvline(0, ls='-', color='r', lw=1, zorder=10)
+        #self.line_anim = animation.FuncAnimation(self.spectrumWidget.canvas.fig, self.update_line, len(self.X_VALS), fargs=(vl,refreshPeriod), interval=100)
+        #self.line_anim = animation.FuncAnimation(self.spectrumWidget.canvas.fig, self.update_line2, frames=int(self.X_MAX / (refreshPeriod / 1000)), fargs=(vl,refreshPeriod), interval=refreshPeriod)
+        self.line_anim = animation.FuncAnimation(self.spectrumWidget.canvas.fig, self.update_line2,
+                                                 fargs=(vl, vl2, refreshPeriod), interval=refreshPeriod, blit=True)
+        #ani = animation.FuncAnimation(fig, animate, frames=int(duration / (refreshPeriod / 1000)), fargs=(vl, refreshPeriod), interval=refreshPeriod)
+        self.line_anim.event_source.stop()
+
+
+
+    def btn_clicked_menuspectrogram_color(self, action):
+        self.spectrum_color = action.text()
+        self.spectrumWidgetPlot(self.spectrumWidget.canvas, self.audio_y, self.audio_sr)
 
 
     def btn_clicked_zoomInXButton(self):
@@ -176,29 +248,55 @@ class MainWindow(QtWidgets.QMainWindow):
         splitWin.exec_()
 
 
+    def draw_timeline(self):
+        vl = self.spectrumWidget.canvas.ax1.axvline(0, ls='-', color='r', lw=1, zorder=10)
+        vl.set_xdata([pygame.mixer.music.get_pos()/1000, pygame.mixer.music.get_pos()/1000])
+        self.spectrumWidget.canvas.fig.canvas.draw()
+
+
     def btn_clicked_actionPlay(self):
+        #t = threading.Thread(target=self.draw_timeline, args=(10,))
+        #t.start()
+        #t.terminate()
+
+
         if(self.actionPlay.text()=="Play"):
             self.actionPlay.setText("Pause")
             if(pygame.mixer.music.get_pos()==-1):
+                if self.spectrumWidget.rectFlag:
+                    self.pos_start = min(self.spectrumWidget.rectStartX, self.spectrumWidget.rectEndX)
+                    self.pos_end = max(self.spectrumWidget.rectStartX, self.spectrumWidget.rectEndX)
                 print("play")
-                pygame.mixer.music.play()
+                #pygame.mixer.music.play()
+                pygame.mixer.music.play(start=self.pos_start)
+                self.line_anim.event_source.start()
             else:
                 print("play")
                 pygame.mixer.music.unpause()
+                self.line_anim.event_source.start()
         else:
             print("pause")
             pygame.mixer.music.pause()
             self.actionPlay.setText("Play")
+            self.line_anim.event_source.stop()
 
 
     def btn_clicked_actionStop(self):
         print("stop")
         pygame.mixer.music.stop()
         self.actionPlay.setText("Play")
+        self.line_anim.event_source.stop()
 
     def btn_clicked_actionPos(self):
         print("pos")
         print(pygame.mixer.music.get_pos())
+        #t = threading.Timer(interval=1, function=self.draw_timeline)
+        #t.start()
+        self.spectrumWidget.rectFlag=False
+        self.pos_init()
+
+
+
 
 
     def spectrumWidgetPlot(self, canvas, audio_y, audio_sr):
@@ -206,6 +304,7 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas.ax2.cla()
         self.spectrumWidget.audio_sr = audio_sr
         self.spectrumWidget.audio_y = audio_y
+
 
         #print(np.max(audio_y))
         #print(np.min(audio_y))
@@ -220,12 +319,14 @@ class MainWindow(QtWidgets.QMainWindow):
         S = np.abs(librosa.stft(audio_y))
         self.spectrumWidget.spectrum = amplitude = librosa.amplitude_to_db(S, ref=np.max)
         #img = librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max), y_axis='log', x_axis='time', ax=canvas.ax)
-        librosa.display.specshow(amplitude, y_axis='linear', x_axis='s', ax=canvas.ax2, sr=audio_sr)
+        librosa.display.specshow(amplitude, y_axis='linear', x_axis='s', ax=canvas.ax2, sr=audio_sr, cmap=self.spectrum_color)
         #librosa.display.specshow(amplitude, y_axis='linear', x_axis='s', ax=canvas.ax2, sr=audio_sr, cmap='Greys')
         #canvas.ax2.set_title('Power spectrogram')
         #canvas.fig.colorbar(img, ax=canvas.ax2, format="%+2.0f dB")
 
+
         canvas.fig.canvas.draw()
+
 
 
 

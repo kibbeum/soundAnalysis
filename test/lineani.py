@@ -22,7 +22,8 @@ y = np.sin(x)
 
 plt.scatter(x, y)
 
-l , v = plt.plot(-6, -1, 6, 1, linewidth=2, color= 'red')
+#l , v = plt.plot(-6, -1, 6, 1, linewidth=2, color= 'red')
+l , v = plt.plot(0, 0, 0, 0, linewidth=2, color= 'red')
 
 plt.xlim(X_MIN, X_MAX)
 plt.ylim(Y_MIN, Y_MAX)
