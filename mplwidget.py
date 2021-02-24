@@ -70,6 +70,12 @@ class MplWidget(QtWidgets.QWidget):
         self.whichEventAx = ""
         self.rectFlag = False
 
+        self.rectAx=0
+        self.rectMinX=0
+        self.rectMaxX=0
+        self.rectMinY = 0
+        self.rectMaxY = 0
+
 
 
 
@@ -132,6 +138,22 @@ class MplWidget(QtWidgets.QWidget):
         print("event.ydata", event.ydata)
         #self.canvas.draw()
         self.rectFlag = True
+
+        self.rectMinX = min(self.rectStartX, self.rectEndX)
+        self.rectMaxX = max(self.rectStartX, self.rectEndX)
+        self.rectMinY = min(self.rectStartY, self.rectEndY)
+        self.rectMaxY = max(self.rectStartY, self.rectEndY)
+
+        if (event.inaxes == self.canvas.ax1):
+            self.rectAx = 1
+            self.mw.label_rect.setText("Begin Time(s): %.3fs   End Time(s): %.3fs" % (self.rectMinX, self.rectMaxX))
+
+        if (event.inaxes == self.canvas.ax2):
+            self.rectAx = 2
+            self.mw.label_rect.setText("Begin Time(s): %.3f   End Time(s): %.3f   Low Freq(Hz): %.3f   High Freq(Hz): %.3f" % (self.rectMinX, self.rectMaxX, self.rectMinY, self.rectMaxY))
+
+
+
 
 
 

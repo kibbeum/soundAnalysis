@@ -12,7 +12,7 @@ ui = "resources/split.ui"
 
 
 class splitWindow(QtWidgets.QDialog):
-    def __init__(self, audioFilename, ax_info, startX, endX, startY, endY):
+    def __init__(self, audioFilename, ax_info, minX, maxX, minY, maxY):
         super().__init__()
         #Load the UI Page
         uic.loadUi(ui, self)
@@ -23,10 +23,10 @@ class splitWindow(QtWidgets.QDialog):
 
         self.audioFilename = audioFilename
         self.ax_info = ax_info
-        self.minX = min(startX,endX)
-        self.maxX = max(startX,endX)
-        self.minY = min(startY,endY)
-        self.maxY = max(startY,endY)
+        self.minX = minX
+        self.maxX = maxX
+        self.minY = minY
+        self.maxY = maxY
 
         print("ax_info %s" % ax_info)
         print("X %s, %s" % (self.minX, self.maxX))
@@ -59,8 +59,12 @@ class splitWindow(QtWidgets.QDialog):
                 """
 
                 sr, data = wavfile.read(self.audioFilename)
-                filterdData = self.butter_bandpass_filter(data, int(self.minY), int(self.maxY), sr, order=5)
-                wavfile.write(filename, sr, filterdData)
+                print(data.shape)
+                print(int(self.minX * sr), int(self.maxX * sr))
+                filterdData = self.butter_bandpass_filter(data[int(self.minX*sr):int(self.maxX*sr)], int(self.minY), int(self.maxY), sr, order=5)
+                wavfile.write(filename, sr, filterdData.astype(np.int16))
+
+
 
 
 
