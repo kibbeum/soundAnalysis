@@ -59,9 +59,16 @@ class splitWindow(QtWidgets.QDialog):
                 """
 
                 sr, data = wavfile.read(self.audioFilename)
-                print(data.shape)
                 print(int(self.minX * sr), int(self.maxX * sr))
-                filterdData = self.butter_bandpass_filter(data[int(self.minX*sr):int(self.maxX*sr)], int(self.minY), int(self.maxY), sr, order=5)
+
+                if data.ndim==1 :
+                    filterdData = self.butter_bandpass_filter(data[int(self.minX * sr):int(self.maxX * sr)],
+                                                              int(self.minY), int(self.maxY), sr, order=5)
+                elif data.ndim==2 :
+                    filterdData = self.butter_bandpass_filter(data[int(self.minX * sr):int(self.maxX * sr),0],
+                                                              int(self.minY), int(self.maxY), sr, order=5)
+
+
                 wavfile.write(filename, sr, filterdData.astype(np.int16))
 
 

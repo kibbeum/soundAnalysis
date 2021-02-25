@@ -122,8 +122,26 @@ class MainWindow(QtWidgets.QMainWindow):
         #audio_y, audio_sr = librosa.load(audio_filename, sr=None)
         # sw_sr, sw_y = wavfile.read(audio_filename)
 
+        pygame.quit()
+
+        audio = AudioSegment.from_file(filename, os.path.splitext(filename)[1][1:])
+        audio_path = "resources/tmp.mp3"
+        if os.path.exists(audio_path):
+            os.remove(audio_path)
+        audio.export(audio_path, format="mp3")
+
+        signal = AudioSegment.from_file(filename, os.path.splitext(filename)[1][1:])
+        signal_path = "resources/tmp.wav"
+        if os.path.exists(signal_path):
+            os.remove(signal_path)
+        signal.export(signal_path, format="wav")
+        self.signal_filename = signal_path
+
         self.audio_filename = filename
         self.audio_y, self.audio_sr = librosa.load(filename, sr=None)
+
+
+
 
         if hasattr(self, 'line_anim'):
             self.line_anim=None
@@ -136,17 +154,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.spectrumWidgetPlot(self.spectrumWidget.canvas, self.audio_y, self.audio_sr)
         # self.signalWidgetPlot(self.signalWidget.canvas, self.audio_y, self.audio_sr)
 
-        pygame.quit()
         pygame.init()
         pygame.mixer.init()
-
-        audio = AudioSegment.from_file(filename, os.path.splitext(filename)[1][1:])
-        audio_path = "resources/tmp.mp3"
-        if os.path.exists(audio_path):
-            os.remove(audio_path)
-        audio.export(audio_path, format="mp3")
-        print(self.audio_sr)
-
         pygame.mixer.music.load(audio_path)
         self.pos_init()
 
@@ -271,7 +280,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def btn_clicked_actionSplit_files(self):
         #splitWin = sw.splitWindow(self.audio_filename, self.spectrumWidget.whichEventAx, self.spectrumWidget.rectStartX, self.spectrumWidget.rectEndX, self.spectrumWidget.rectStartY, self.spectrumWidget.rectEndY)
-        splitWin = sw.splitWindow(self.audio_filename, self.spectrumWidget.whichEventAx, self.spectrumWidget.rectMinX,
+        #splitWin = sw.splitWindow(self.audio_filename, self.spectrumWidget.whichEventAx, self.spectrumWidget.rectMinX, self.spectrumWidget.rectMaxX, self.spectrumWidget.rectMinY, self.spectrumWidget.rectMaxY)
+        splitWin = sw.splitWindow(self.signal_filename, self.spectrumWidget.whichEventAx, self.spectrumWidget.rectMinX,
                                   self.spectrumWidget.rectMaxX, self.spectrumWidget.rectMinY,
                                   self.spectrumWidget.rectMaxY)
         splitWin.exec_()
