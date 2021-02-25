@@ -11,7 +11,10 @@ import numpy as np
 
 ui = "resources/open.ui"
 
-
+"""
+    Class : openWindow
+    - File>Open 실행 시 띄워지는 Dialog Class
+"""
 class openWindow(QtWidgets.QDialog):
     def __init__(self, mw):
         super().__init__()
@@ -26,13 +29,12 @@ class openWindow(QtWidgets.QDialog):
         self.closeButton.clicked.connect(self.btn_closeButton)
 
 
-
+    # event
     def btn_openButton(self):
         self.fileLabel.text()
         #MainWindow.loadInit(self.fileLabel.text())
         self.mw.loadInit(self.fileLabel.text())
         self.close()
-
 
     def btn_closeButton(self):
         self.close()

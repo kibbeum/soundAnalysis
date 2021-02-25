@@ -9,12 +9,18 @@ ui = "resources/concat.ui"
 
 sound_extension_list = ["wav", "mp3", "m4a", "flac", "mp4", "wma", "aac"]
 
+
+"""
+    Class : concatWindow
+    - Edit>Concat Files 선택 시 띄워지는 Dialog Class
+"""
 class concatWindow(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
         #Load the UI Page
         uic.loadUi(ui, self)
 
+        # event
         self.BrowseButton.clicked.connect(self.btn_BrowseButton)
         self.PreviewButton.clicked.connect(self.btn_PreviewButton)
         self.concatButton.clicked.connect(self.btn_concatButton)
@@ -27,7 +33,7 @@ class concatWindow(QtWidgets.QDialog):
         self.concatList = []
         self.concatPath = ""
 
-
+    # event handler
     def btn_concatButton(self):
         outputFilename = self.outputFilenameLabel.text()
 
@@ -51,8 +57,6 @@ class concatWindow(QtWidgets.QDialog):
 
     def btn_closeButton(self):
         self.close()
-
-
 
     def btn_BrowseButton(self):
         dname = QtWidgets.QFileDialog.getExistingDirectory(self)
@@ -101,20 +105,4 @@ class concatWindow(QtWidgets.QDialog):
         else:
             print("error")
 
-
-        """
-        rp = 0
-        for f in files:
-            fullpath = dpath + "/" + f
-            if (os.path.isfile(fullpath) and os.path.splitext(f)[1][1:] in sound_extension_list):
-                # print("filename: %s, modified time: %s" % (f, time.ctime(os.path.getmtime(fullpath))))
-                mtime = datetime.datetime.fromtimestamp(os.stat(fullpath).st_mtime)
-                size = os.stat(fullpath).st_size
-                print("filename: %s, modified time: %s, size: %s" % (f, mtime, size))
-                self.tableWidget.insertRow(rp)
-                self.tableWidget.setItem(rp, 0, QtGui.QTableWidgetItem(str(f)))
-                self.tableWidget.setItem(rp, 1, QtGui.QTableWidgetItem(str(mtime)))
-                self.tableWidget.setItem(rp, 2, QtGui.QTableWidgetItem(str(size)))
-                rp = rp + 1
-        """
 

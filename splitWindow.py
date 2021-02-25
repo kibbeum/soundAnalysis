@@ -10,13 +10,17 @@ import numpy as np
 
 ui = "resources/split.ui"
 
-
+"""
+    Class : splitWindow
+    - Edit>Split File 실행 시 띄워지는 Dialog Class
+"""
 class splitWindow(QtWidgets.QDialog):
     def __init__(self, audioFilename, ax_info, minX, maxX, minY, maxY):
         super().__init__()
         #Load the UI Page
         uic.loadUi(ui, self)
 
+        # event
         self.BrowseButton.clicked.connect(self.btn_BrowseButton)
         self.splitButton.clicked.connect(self.btn_splitButton)
         self.closeButton.clicked.connect(self.btn_closeButton)
@@ -28,11 +32,11 @@ class splitWindow(QtWidgets.QDialog):
         self.minY = minY
         self.maxY = maxY
 
-        print("ax_info %s" % ax_info)
-        print("X %s, %s" % (self.minX, self.maxX))
-        print("Y %s, %s" % (self.minY, self.maxY))
+        #print("ax_info %s" % ax_info)
+        #print("X %s, %s" % (self.minX, self.maxX))
+        #print("Y %s, %s" % (self.minY, self.maxY))
 
-
+    # event handler
     def btn_splitButton(self):
         outputFilename = self.outputFilenameLabel.text()
         dpath = self.directoryLabel.text()
@@ -71,14 +75,9 @@ class splitWindow(QtWidgets.QDialog):
 
                 wavfile.write(filename, sr, filterdData.astype(np.int16))
 
-
-
-
-
                 print("completed")
 
                 #wavfile.write()
-
 
             else:
                 print("error")
@@ -95,6 +94,10 @@ class splitWindow(QtWidgets.QDialog):
         self.directoryLabel.setText(dname)
 
 
+    """ 
+        func : butter_bandpass
+        - spectrum 범위 선택 후 split file 실행 시 frequency filter
+    """
     def butter_bandpass(self, lowcut, higcut, fs, order=5):
         nyq = 0.5 * fs
         low = lowcut / nyq
@@ -102,6 +105,10 @@ class splitWindow(QtWidgets.QDialog):
         b, a = scipy.signal.butter(order, [low, high], btype='band')
         return b, a
 
+    """ 
+        func : butter_bandpass_filter
+        - spectrum 범위 선택 후 split file 실행 시 frequency filter
+    """
     def butter_bandpass_filter(self, data, lowcut, higcut, fs, order=5):
         b, a = self.butter_bandpass(lowcut, higcut, fs, order=order)
         #y = scipy.signal.lfilter(b, a, data)

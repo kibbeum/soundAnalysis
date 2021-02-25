@@ -1,4 +1,9 @@
 from matplotlib.widgets import RectangleSelector
+
+"""
+    Class : BoundrySelector
+    - audio 범위 선택을 위한 selector class
+"""
 class BoundrySelector(RectangleSelector):
     def draw_shape(self, extents):
         x0, x1, y0, y1 = extents
