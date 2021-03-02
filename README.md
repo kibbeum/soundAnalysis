@@ -1,0 +1,1 @@
+# pyinstaller -w -F --icon=resources/sound-waves.ico main2.py
