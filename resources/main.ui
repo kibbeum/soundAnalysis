@@ -573,6 +573,7 @@
     <addaction name="actionSplit_files"/>
     <addaction name="menuspectrogram_color"/>
     <addaction name="menuspectrogram_type"/>
+    <addaction name="actionRemove_Noise"/>
    </widget>
    <widget class="QMenu" name="menuPlay">
     <property name="title">
@@ -655,6 +656,11 @@
   <action name="actiond">
    <property name="text">
     <string>d</string>
+   </property>
+  </action>
+  <action name="actionRemove_Noise">
+   <property name="text">
+    <string>Remove Noise</string>
    </property>
   </action>
  </widget>
